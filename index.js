@@ -38,6 +38,15 @@ app.get('/PopularClasses',async(req,res)=>{
 
 
 
+const PopularInstructorsCollection = client.db('Poly-Fusion').collection('PopularInstructors');
+app.get('/PopularInstructors',async(req,res)=>{
+    const cursor = PopularInstructorsCollection.find();
+    const result=await cursor.toArray();
+    res.send(result);
+})
+
+
+
 
 
 
