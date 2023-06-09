@@ -46,6 +46,24 @@ app.get('/PopularInstructors',async(req,res)=>{
 })
 
 
+// const InstrctorsCollection = client.db('Poly-Fusion').collection('Instructors');
+// app.get('/Instructors',async(res,req)=>{
+//     const cursor = InstrctorsCollection.find();
+//     const result = await cursor.toArray();
+//     res.send(result);
+// })
+
+
+const InstructorCollection = client.db('Poly-Fusion').collection('Instructor');
+
+app.get('/Instructor', async (req, res) => {
+  const cursor = InstructorCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+});
+
+
+
 
 
 
