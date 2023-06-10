@@ -1,5 +1,5 @@
 const express=require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const cors=require('cors');
 const app=express();
@@ -85,6 +85,14 @@ app.get('/Data',async(req,res)=>{
   const query={email:email};
   const result=await SelectedDataCollection.find(query).toArray();
   res.send(result);
+})
+
+app.delete('/Data/:id',async(req,res)=>{
+  const id=req.params.id;
+  const query={_id:(id)};
+  const result=await SelectedDataCollection.deleteOne(query);
+  res.send(result);
+  
 })
 
 
