@@ -77,6 +77,17 @@ res.send(result);
 })
 
 
+app.get('/Data',async(req,res)=>{
+  const email=req.query.email;
+  if(!email){
+    res.send([]);
+  }
+  const query={email:email};
+  const result=await SelectedDataCollection.find(query).toArray();
+  res.send(result);
+})
+
+
 
 
 
