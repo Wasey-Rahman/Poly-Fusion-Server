@@ -68,7 +68,13 @@ app.get('/Class', async (req, res) => {
 });
 
 
-
+const SelectedDataCollection = client.db('Poly-Fusion').collection('Data');
+app.post('/Data',async(req,res)=>{
+const item=req.body;
+console.log(item);
+const result=await SelectedDataCollection.insertOne(item);
+res.send(result);
+})
 
 
 
