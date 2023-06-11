@@ -1,6 +1,7 @@
 const express=require('express');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
+const stripe = require('stripe')(process.env.PAYMENT_SECRET);
 const cors=require('cors');
 const app=express();
 const port =process.env.PORT || 5000;
@@ -93,6 +94,33 @@ app.delete('/Data/:id',async(req,res)=>{
   const result=await SelectedDataCollection.deleteOne(query);
   res.send(result);
   
+})
+
+app.post('/create-payment-intent', async (req, res) => {
+  const { price } = req.body;
+  const amount=price*100;
+  if (amount < 100) {
+    // Handle the case when the amount is less than 1 unit
+    res.status(400).send({ error: 'Invalid price' });
+    return;
+  }
+
+  console.log(price,amount);
+  try {
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: "usd",
+    
+     
+})
+res.send({
+  clientSecret: paymentIntent.client_secret,
+});
+} catch (error) {
+  console.log('[Error]', error);
+  res.status(500).send({ error: 'Failed to create payment intent' });
+}
+
 })
 
 
