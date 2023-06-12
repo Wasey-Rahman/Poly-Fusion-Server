@@ -8,6 +8,12 @@ const port =process.env.PORT || 5000;
 
 // middleware
 app.use(cors());
+// const corsConfig={
+//   origin:'*',
+//   credential:true,
+//   methods:['GET','POST','PUT','PATCH','DELETE']
+// }
+// app.use(cors(corsConfig));
 app.use(express.json());
 
 console.log(process.env.DB_PASS)
@@ -27,7 +33,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
 
 const PopularClassesCollection = client.db('Poly-Fusion').collection('PopularClasses');
@@ -124,6 +130,85 @@ res.send({
 })
 
 
+const userCollection=client.db("Poly-Fusion").collection("user");
+app.post('/user',async(req,res)=>{
+  const user=req.body;
+  console.log(user)
+  const query={email:user.email}
+  const existingUser=await userCollection.findOne(query);
+  console.log(existingUser)
+  if(existingUser){
+    return res.send({message:'user already exists'})
+  }
+  const result=await userCollection.insertOne(user);
+  res.send(result);
+  })
+  
+  app.get('/user', async (req, res) => {
+    const cursor = userCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  });
+
+  // app.patch('/user/admin/:id',async(res,req)=>{
+  //   const id=req.params.id;
+  //   const filter={_id:new ObjectId(id)};
+  //   const updateDoc={
+  //     $set:{
+  //       role:'admin'
+  //     },
+  //   };
+  //   const result=await userCollection.updateOne(filter,updateDoc) ;
+  //   res.send(result);
+  // })
+
+
+
+
+  app.patch('/user/admin/:id', async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).send('Invalid ID'); // Return a response if ID is not provided
+      }
+  
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: 'admin'
+        }
+      };
+  
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
+
+  app.patch('/user/instructor/:id', async (req, res) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).send('Invalid ID'); // Return a response if ID is not provided
+      }
+  
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: 'instructor'
+        }
+      };
+  
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 
 
 
